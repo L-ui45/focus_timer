@@ -58,3 +58,36 @@ resetBtn.addEventListener("click", () => {
 });
 
 render();
+
+/* ---------- 浅色 / 深色模式切换 ---------- */
+
+const themeToggle = document.getElementById("themeToggle");
+const THEME_KEY = "focus-timer-theme";
+
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  themeToggle.textContent = isDark ? "☀️ 浅色" : "🌙 深色";
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+}
+
+function initialTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === "dark" || saved === "light") return saved;
+  } catch {}
+
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+applyTheme(initialTheme());
+
+themeToggle.addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(next);
+  try {
+    localStorage.setItem(THEME_KEY, next);
+  } catch {}
+});
